@@ -9,21 +9,28 @@ class Visualizer:
 
     def __init__(self, molecule: Molecule):
         self.__molecule = molecule
+        self.__all_shapes = []
+        self.__backbone_shapes = []
+        self.__only_backbone = False
 
     def render(self):
         scene = canvas(title='Protein',
-                   width=800, height=800,
-                   center=vector(5, 0, 0), background=color.black)
+                       width=800, height=600,
+                       center=vector(5, 0, 0), background=color.black)
 
-        # scene.bind('mousedown', self.process)
+        # scene.bind('mousedown', self.only_backbone)
+
+        button(bind=self.only_backbone, text="Backbone Toggle")
 
         for a in self.__molecule.get_atoms():
+
+            c = ColorDictionary.color_dic[a.get_element().get_symbol()]
+            s = sphere(canvas=scene, pos=vector(a.get_x(), a.get_y(), a.get_z()), color=c,
+                       radius=(a.get_element().get_van_der_waals_radius() / 130))
             if "backbone" in a.get_labels():
-                c = color.magenta
-            else:
-                c = ColorDictionary.color_dic[a.get_element().get_symbol()]
-            sphere(canvas=scene, pos=vector(a.get_x(), a.get_y(), a.get_z()), color=c,
-                   radius=(a.get_element().get_van_der_waals_radius()/130))
+                self.__backbone_shapes.append(s)
+                s.color = color.magenta
+            self.__all_shapes.append(s)
 
     # def process(self, ev):
     #     x = ev.pos.x
@@ -42,14 +49,23 @@ class Visualizer:
                 min_dist = dist
         return result
 
+    def only_backbone(self):
+        self.__only_backbone = not self.__only_backbone
+        if self.__only_backbone:
+            for a in self.__all_shapes:
+                if a not in self.__backbone_shapes:
+                    a.visible = False
+        else:
+            for a in self.__all_shapes:
+                a.visible = True
 
 
 def main():
     converter = PdbConverter()
-    # converter.pdb_normalized("/Users/dimavremenko/PycharmProjects/Molecules/src/Resources/2os3.txt")
-    molecule = converter.pdb_to_molecule("/Users/dimavremenko/PycharmProjects/Molecules/src/Resources/2os3.txt")
-    v = Visualizer(molecule)
-    v.render()
+    molecule = converter.pdb_to_molecule("/Users/dimavremenko/Documents/GitHub/Protein-Visualizer/"
+                                         "src/Resources/2os3.txt")
+    view = Visualizer(molecule)
+    view.render()
 
 
 if __name__ == "__main__":

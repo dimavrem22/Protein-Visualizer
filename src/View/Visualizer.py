@@ -63,7 +63,7 @@ class Visualizer:
 def main():
     converter = PdbConverter()
     molecule = converter.pdb_to_molecule("/Users/dimavremenko/Documents/GitHub/Protein-Visualizer/"
-                                         "src/Resources/2os3.txt")
+                                         "src/Resources/1si4.txt")
     view = Visualizer(molecule)
     view.render()
 

@@ -7,7 +7,7 @@ class Atom:
         self.__idt = idt
         self.__element = e
         self.__x = x
-        self.__y = y
+        self.__y = y 
         self.__z = z
         self.__labels = []
 
